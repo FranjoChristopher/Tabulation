@@ -1,0 +1,2663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pageant Judging</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        padding: 20px;
+    }
+    
+    h2, h3 {
+        margin-bottom: 10px;
+    }
+    
+    /* Main Tabs Styles */
+    .main-tabs {
+        list-style-type: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        padding: 10px;
+        flex-wrap: wrap; /* Allow wrapping to prevent overflow */
+    }
+    
+    /* For Dropdown on the left */
+    .main-tabs select {
+        padding: 10px;
+        border-radius: 4px;
+        border: none;
+        background-color: #555;
+        color: white;
+        transition: background-color 0.3s;
+        width: 150px; /* Control dropdown width */
+    }
+    
+    /* Buttons container on the right */
+    .main-tabs .right-buttons {
+        display: flex;
+        gap: 10px; /* Space between buttons */
+        flex-wrap: wrap; /* Wrap buttons if needed */
+        justify-content: flex-end;
+        flex-grow: 1; /* Ensure right alignment */
+    }
+    
+    .main-tabs li {
+        display: inline;
+    }
+    
+/* Common Button Styles */
+.main-tabs button, .main-tabs a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 15px; /* Adjusted padding to prevent overflow */
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    min-width: 100px;
+    max-width: 150px; /* Limit width */
+    text-align: center;
+    display: inline-block; /* Ensure buttons and links behave similarly */
+}
+
+.main-tabs button:hover, .main-tabs a:hover {
+    background-color: #555;
+}
+
+/* Specific style for the 'Back' link */
+.back-button {
+    background-color: #333;
+    padding: 10px 15px; /* Consistent padding */
+    color: white;
+    border-radius: 4px;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #555;
+}
+
+.right-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+    
+    
+    /* Contestant Sub-tabs Styles */
+    .contestant-tabs {
+        list-style-type: none;
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+    
+    .contestant-tabs li {
+        display: inline;
+    }
+    
+    .contestant-tabs a {
+        text-decoration: none;
+        color: #333;
+        padding: 8px 16px;
+        background-color: #eaeaea;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    .contestant-tabs a:hover {
+        background-color: #ddd;
+    }
+    
+    /* Active tab highlight (if needed) */
+    .contestant-tabs a.active, .main-tabs a.active {
+        background-color: #007BFF;
+        color: white;
+    }
+    
+    /* Tab Content Section */
+    .tab-content {
+        margin-top: 20px;
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    /* Form and Input Styles */
+    .judges-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    
+    .container {
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        width: 30%;
+    }
+    
+    .input-group {
+        margin-bottom: 15px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    button {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    button:hover {
+        background-color: #0056b3;
+    }
+    
+    
+    /* Media Query for Responsive Layout */
+    @media (max-width: 768px) {
+        .judges-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        /* Ensure dropdown and buttons stack on smaller screens */
+        .main-tabs {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .main-tabs select {
+            width: 100%;
+        }
+        
+        .right-buttons {
+            justify-content: space-between;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        
+        .main-tabs button, .main-tabs a {
+            width: 100%; /* Full width on smaller screens */
+        }
+    }
+    
+    .logo-container {
+    display: flex;
+    justify-content: center; /* Center the logos */
+    gap: 20px; /* Space between the logos */
+    margin-bottom: 10px; /* Adjust spacing between logos and tabs */
+    position: relative; /* Ensure logos are layered over the video */
+    z-index: 1; /* Logos are on top of the video */
+}
+
+.logo {
+    max-width: 100px; /* Adjust size as necessary */
+    height: auto;
+}
+
+#background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* Video stays behind the logos */
+    opacity: 0.3; /* Optional: Adjust opacity to make logos stand out */
+}
+
+</style>    
+</head>
+<body>
+    <div class="logo-container">
+        <video autoplay muted loop id="background-video">
+            <source src="bgv.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <img src="offlogo.png" alt="Logo 1" class="logo">
+        <img src="intramslogo.png" alt="Logo 2" class="logo">
+    </div>
+    
+    
+<!-- Main Header Tabs -->
+<ul class="main-tabs">
+    <!-- Dropdown on the left -->
+     
+    <li>
+        <select onchange="showTab(this.value)" class="editable">
+            <option value="casual">Casual Wear</option>
+            <option value="swimsuit">Swimsuit</option>
+            <option value="qna">Question & Answer</option>
+        </select>
+    </li>
+
+<!-- Right buttons container -->
+<div class="right-buttons">
+    <li><button onclick="showTab('result')">Result</button></li>
+    <li><button onclick="saveResults()">Save Results</button><script src="save.js"></script></li>
+    <li><button class="back-button" onclick="confirmBack()">Back</button></li>
+    
+</div>
+
+<script>
+function confirmBack() {
+    // Show confirmation dialog
+    if (confirm("Are you sure you want to go back?")) {
+        window.location.href = "start.html"; // Redirect to start.html if confirmed
+    }
+}
+</script>
+    
+</ul>
+
+
+<div class="tab-content" id="result" style="display: none;">
+    <style>/* Styling for the tab content */
+.tab-content {
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* General styling for average ranking containers */
+.average-ranking-container {
+    margin-bottom: 40px;
+}
+
+h2, h3 {
+    color: #333;
+    font-family: 'Arial', sans-serif;
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Styling for tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+table td {
+    background-color: #f2f2f2;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #e9e9e9;
+}
+
+/* Styling for winner messages */
+#winner-display h3, 
+#swimsuit-winner-display h3,
+#qa-winner-display h3 {
+    text-align: center;
+    font-size: 24px;
+    color: #4CAF50;
+    margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+    /* Responsive styling for smaller screens */
+    .tab-content {
+        padding: 10px;
+    }
+
+    table th, table td {
+        padding: 8px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    #winner-display h3, 
+    #swimsuit-winner-display h3,
+    #qa-winner-display h3 {
+        font-size: 20px;
+    }
+}
+</style>
+    <div class="average-ranking-container">
+        <h2>Contestant Average Scores and Rankings for Casual Wear</h2>
+    
+        <!-- Male Contestants Ranking -->
+        <h3>Male Contestants (1-4)</h3>
+        <table id="ranking-table-male">
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores for male contestants will be dynamically inserted here -->
+            </tbody>
+        </table>
+    
+        <!-- Female Contestants Ranking -->
+        <h3>Female Contestants (5-8)</h3>
+        <table id="ranking-table-female">
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores for female contestants will be dynamically inserted here -->
+            </tbody>
+        </table>
+    
+        <div id="winner-display">
+            <h3 id="winner-message"></h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+
+    <div class="average-ranking-container">
+        <h2>Contestant Average Scores and Rankings for Swimsuit Wear</h2>
+    
+        <!-- Male Contestants Ranking for Swimsuit Wear -->
+        <h3>Male Contestants (1-4)</h3>
+        <table id="swimsuit-ranking-table-male">
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores for male contestants will be dynamically inserted here -->
+            </tbody>
+        </table>
+    
+        <!-- Female Contestants Ranking for Swimsuit Wear -->
+        <h3>Female Contestants (5-8)</h3>
+        <table id="swimsuit-ranking-table-female">
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores for female contestants will be dynamically inserted here -->
+            </tbody>
+        </table>
+    
+        <div id="swimsuit-winner-display">
+            <h3 id="swimsuit-winner-message"></h3>
+        </div>
+        
+        <!-- Link the modified script for the swimsuit contest -->
+        <script src="script2.js"></script>
+    </div>
+
+    <div class="average-ranking-container">
+        <h2>Contestant Average Scores and Rankings for Casual Wear</h2>
+    
+        <!-- Male Contestants Ranking -->
+        <h3>Male Contestants (1-4)</h3>
+        <table id="qa-ranking-table-male">
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores for male contestants will be dynamically inserted here -->
+            </tbody>
+        </table>
+    
+        <!-- Female Contestants Ranking -->
+        <h3>Female Contestants (5-8)</h3>
+        <table id="qa-ranking-table-female">
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Scores for female contestants will be dynamically inserted here -->
+            </tbody>
+        </table>
+    
+        <div id="qa-winner-display">
+            <h3 id="qa-winner-message"></h3>
+        </div>
+        <script src="script3.js"></script>
+    </div>
+    
+    
+</div>
+
+<!-- Tab Content Containers -->
+<div class="tab-content" id="casual" style="display: none;">
+    <ul class="contestant-tabs">
+        <li><a href="#casual-contestant-1" onclick="showContestant('casual-contestant-1')">Contestant 1</a></li>
+        <li><a href="#casual-contestant-2" onclick="showContestant('casual-contestant-2')">Contestant 2</a></li>
+        <li><a href="#casual-contestant-3" onclick="showContestant('casual-contestant-3')">Contestant 3</a></li>
+        <li><a href="#casual-contestant-4" onclick="showContestant('casual-contestant-4')">Contestant 4</a></li>
+        <li><a href="#casual-contestant-5" onclick="showContestant('casual-contestant-5')">Contestant 5</a></li>
+        <li><a href="#casual-contestant-6" onclick="showContestant('casual-contestant-6')">Contestant 6</a></li>
+        <li><a href="#casual-contestant-7" onclick="showContestant('casual-contestant-7')">Contestant 7</a></li>
+        <li><a href="#casual-contestant-8" onclick="showContestant('casual-contestant-8')">Contestant 8</a></li>
+    </ul>
+
+    <!-- Judge Scores for Contestant 1 -->
+    <div class="contestant-content" id="casual-contestant-1" style="display: none;">
+        <h2>Judging for Contestant 1 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 1 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-1">
+                    <div class="input-group">
+                        <label for="poise-1">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-1">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-1" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-1">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-1" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-1">Overall Performance (10%):</label>
+                        <input type="number" id="performance-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 1)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-1">0</span></h3>
+                </div>
+            </div>
+
+            <!-- Judge 2 for Contestant 1 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-2">
+                    <div class="input-group">
+                        <label for="poise-2">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-2">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-2" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-2">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-2" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-2">Overall Performance (10%):</label>
+                        <input type="number" id="performance-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 1)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-2">0</span></h3>
+                </div>
+            </div>
+
+            <!-- Judge 3 for Contestant 1 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-3">
+                    <div class="input-group">
+                        <label for="poise-3">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-3">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-3" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-3">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-3" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-3">Overall Performance (10%):</label>
+                        <input type="number" id="performance-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 1)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-1">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+
+    <!-- Judge Scores for Contestant 2 -->
+    <div class="contestant-content" id="casual-contestant-2" style="display: none;">
+        <h2>Judging for Contestant 2 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 2 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-4">
+                    <div class="input-group">
+                        <label for="poise-4">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-4">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-4" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-4">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-4" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-4">Overall Performance (10%):</label>
+                        <input type="number" id="performance-4" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1,  2)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-4">0</span></h3>
+                </div>
+            </div>
+
+            <!-- Judge 2 for Contestant 2 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-5">
+                    <div class="input-group">
+                        <label for="poise-5">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-5">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-5" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-5">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-5" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-5">Overall Performance (10%):</label>
+                        <input type="number" id="performance-5" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 2)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-5">0</span></h3>
+                </div>
+            </div>
+
+            <!-- Judge 3 for Contestant 2 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-6">
+                    <div class="input-group">
+                        <label for="poise-6">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-6">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-6" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-6">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-6" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-6">Overall Performance (10%):</label>
+                        <input type="number" id="performance-6" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 2)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-6">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-2">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+
+    <div class="contestant-content" id="casual-contestant-3" style="display: none;">
+        <h2>Judging for Contestant 3 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 3 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-7">
+                    <div class="input-group">
+                        <label for="poise-7">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-7">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-7" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-7">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-7" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-7">Overall Performance (10%):</label>
+                        <input type="number" id="performance-7" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 3)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-7">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 2 for Contestant 3 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-8">
+                    <div class="input-group">
+                        <label for="poise-8">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-8">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-8" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-8">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-8" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-8">Overall Performance (10%):</label>
+                        <input type="number" id="performance-8" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 3)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-8">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 3 for Contestant 3 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-9">
+                    <div class="input-group">
+                        <label for="poise-9">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-9" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-9">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-9" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-9">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-9" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-9">Overall Performance (10%):</label>
+                        <input type="number" id="performance-9" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 3)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-9">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-3">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="casual-contestant-4" style="display: none;">
+        <h2>Judging for Contestant 4 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 4 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-10">
+                    <div class="input-group">
+                        <label for="poise-10">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-10" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-10">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-10" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-10">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-10" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-10">Overall Performance (10%):</label>
+                        <input type="number" id="performance-10" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 4)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-10">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 2 for Contestant 4 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-11">
+                    <div class="input-group">
+                        <label for="poise-11">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-11" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-11">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-11" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-11">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-11" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-11">Overall Performance (10%):</label>
+                        <input type="number" id="performance-11" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 4)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-11">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 3 for Contestant 4 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-12">
+                    <div class="input-group">
+                        <label for="poise-12">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-12" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-12">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-12" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-12">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-12" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-12">Overall Performance (10%):</label>
+                        <input type="number" id="performance-12" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 4)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-12">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-4">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="casual-contestant-5" style="display: none;">
+        <h2>Judging for Contestant 5 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 5 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-13">
+                    <div class="input-group">
+                        <label for="poise-13">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-13" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-13">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-13" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-13">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-13" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-13">Overall Performance (10%):</label>
+                        <input type="number" id="performance-13" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 5)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-13">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 2 for Contestant 5 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-14">
+                    <div class="input-group">
+                        <label for="poise-14">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-14" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-14">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-14" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-14">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-14" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-14">Overall Performance (10%):</label>
+                        <input type="number" id="performance-14" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 5)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-14">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 3 for Contestant 5 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-15">
+                    <div class="input-group">
+                        <label for="poise-15">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-15" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-15">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-15" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-15">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-15" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-15">Overall Performance (10%):</label>
+                        <input type="number" id="performance-15" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 5)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-15">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-5">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+
+    <div class="contestant-content" id="casual-contestant-6" style="display: none;">
+        <h2>Judging for Contestant 6 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 6 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-16">
+                    <div class="input-group">
+                        <label for="poise-16">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-16" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-16">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-16" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-16">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-16" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-16">Overall Performance (10%):</label>
+                        <input type="number" id="performance-16" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 6)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-16">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 2 for Contestant 6 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-17">
+                    <div class="input-group">
+                        <label for="poise-17">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-17" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-17">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-17" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-17">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-17" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-17">Overall Performance (10%):</label>
+                        <input type="number" id="performance-17" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 6)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-17">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 3 for Contestant 6 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-18">
+                    <div class="input-group">
+                        <label for="poise-18">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-18" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-18">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-18" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-18">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-18" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-18">Overall Performance (10%):</label>
+                        <input type="number" id="performance-18" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 6)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-18">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-6">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+
+    <div class="contestant-content" id="casual-contestant-7" style="display: none;">
+        <h2>Judging for Contestant 7 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 7 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-19">
+                    <div class="input-group">
+                        <label for="poise-19">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-19" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-19">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-19" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-19">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-19" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-19">Overall Performance (10%):</label>
+                        <input type="number" id="performance-19" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 7)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-19">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 2 for Contestant 7 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-20">
+                    <div class="input-group">
+                        <label for="poise-20">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-20" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-20">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-20" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-20">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-20" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-20">Overall Performance (10%):</label>
+                        <input type="number" id="performance-20" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 7)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-20">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 3 for Contestant 7 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-21">
+                    <div class="input-group">
+                        <label for="poise-21">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-21" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-21">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-21" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-21">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-21" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-21">Overall Performance (10%):</label>
+                        <input type="number" id="performance-21" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 7)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-21">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-7">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+
+    <div class="contestant-content" id="casual-contestant-8" style="display: none;">
+        <h2>Judging for Contestant 8 - Casual Wear</h2>
+        <div class="judges-container">
+            <!-- Judge 1 for Contestant 8 -->
+            <div class="container">
+                <h2>Judge 1 Score</h2>
+                <form id="judging-form-22">
+                    <div class="input-group">
+                        <label for="poise-22">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-22" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-22">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-22" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-22">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-22" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-22">Overall Performance (10%):</label>
+                        <input type="number" id="performance-22" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(1, 8)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-22">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 2 for Contestant 8 -->
+            <div class="container">
+                <h2>Judge 2 Score</h2>
+                <form id="judging-form-23">
+                    <div class="input-group">
+                        <label for="poise-23">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-23" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-23">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-23" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-23">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-23" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-23">Overall Performance (10%):</label>
+                        <input type="number" id="performance-23" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(2, 8)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-23">0</span></h3>
+                </div>
+            </div>
+    
+            <!-- Judge 3 for Contestant 8 -->
+            <div class="container">
+                <h2>Judge 3 Score</h2>
+                <form id="judging-form-24">
+                    <div class="input-group">
+                        <label for="poise-24">Poise and Carriage (40%):</label>
+                        <input type="number" id="poise-24" placeholder="Enter score out of 40" min="0" max="40" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="attire-24">Choice of Attire (25%):</label>
+                        <input type="number" id="attire-24" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="beauty-24">Beauty of Face (25%):</label>
+                        <input type="number" id="beauty-24" placeholder="Enter score out of 25" min="0" max="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="performance-24">Overall Performance (10%):</label>
+                        <input type="number" id="performance-24" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateTotal(3, 8)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="total-score-24">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="average-score-8">0</h3>
+        </div>
+        <script src="script.js"></script>
+    </div>
+    
+    
+</div>
+
+<div class="tab-content" id="swimsuit" style="display: none;">
+    <ul class="contestant-tabs">
+        <li><a href="#swimsuit-contestant-1" onclick="showContestant('swimsuit-contestant-1')">Contestant 1</a></li>
+        <li><a href="#swimsuit-contestant-2" onclick="showContestant('swimsuit-contestant-2')">Contestant 2</a></li>
+        <li><a href="#swimsuit-contestant-3" onclick="showContestant('swimsuit-contestant-3')">Contestant 3</a></li>
+        <li><a href="#swimsuit-contestant-4" onclick="showContestant('swimsuit-contestant-4')">Contestant 4</a></li>
+        <li><a href="#swimsuit-contestant-5" onclick="showContestant('swimsuit-contestant-5')">Contestant 5</a></li>
+        <li><a href="#swimsuit-contestant-6" onclick="showContestant('swimsuit-contestant-6')">Contestant 6</a></li>
+        <li><a href="#swimsuit-contestant-7" onclick="showContestant('swimsuit-contestant-7')">Contestant 7</a></li>
+        <li><a href="#swimsuit-contestant-8" onclick="showContestant('swimsuit-contestant-8')">Contestant 8</a></li>
+        <!-- Repeat for Contestants 2-8 -->
+    </ul>
+    <div class="contestant-content" id="swimsuit-contestant-1" style="display: none;">
+        <h2>Judging for Contestant 1 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-1-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-1-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-1-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-1-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-1-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-1-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-1-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-1-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 1)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-1-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-1-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-1-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-1-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-1-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-1-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-1-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-1-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-1-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 1)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-1-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-1-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-1-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-1-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-1-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-1-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-1-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-1-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-1-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 1)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-1-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-1">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-2" style="display: none;">
+        <h2>Judging for Contestant 2 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-2-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-2-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-2-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-2-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-2-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-2-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-2-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-2-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 2)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-2-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-2-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-2-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-2-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-2-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-2-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-2-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-2-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-2-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 2)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-2-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-2-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-2-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-2-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-2-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-2-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-2-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-2-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-2-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 2)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-2-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-2">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-3" style="display: none;">
+        <h2>Judging for Contestant 3 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-3-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-3-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-3-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-3-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-3-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-3-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-3-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-3-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 3)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-3-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-3-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-3-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-3-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-3-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-3-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-3-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-3-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-3-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 3)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-3-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-3-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-3-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-3-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-3-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-3-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-3-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-3-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-3-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 3)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-3-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-3">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-4" style="display: none;">
+        <h2>Judging for Contestant 4 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-4-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-4-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-4-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-4-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-4-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-4-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-4-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-4-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 4)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-4-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-4-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-4-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-4-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-4-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-4-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-4-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-4-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-4-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 4)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-4-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-4-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-4-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-4-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-4-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-4-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-4-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-4-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-4-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 4)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-4-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-4">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-5" style="display: none;">
+        <h2>Judging for Contestant 5 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-5-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-5-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-5-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-5-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-5-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-5-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-5-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-5-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 5)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-5-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-5-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-5-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-5-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-5-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-5-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-5-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-5-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-5-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 5)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-5-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-5-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-5-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-5-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-5-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-5-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-5-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-5-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-5-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 5)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-5-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-5">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-6" style="display: none;">
+        <h2>Judging for Contestant 6 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-6-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-6-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-6-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-6-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-6-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-6-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-6-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-6-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 6)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-6-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-6-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-6-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-6-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-6-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-6-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-6-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-6-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-6-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 6)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-6-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-6-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-6-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-6-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-6-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-6-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-6-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-6-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-6-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 6)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-6-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-6">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-7" style="display: none;">
+        <h2>Judging for Contestant 7 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-7-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-7-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-7-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-7-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-7-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-7-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-7-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-7-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 7)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-7-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-7-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-7-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-7-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-7-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-7-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-7-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-7-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-7-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 7)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-7-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-7-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-7-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-7-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-7-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-7-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-7-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-7-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-7-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 7)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-7-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-7">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <div class="contestant-content" id="swimsuit-contestant-8" style="display: none;">
+        <h2>Judging for Contestant 8 - Swimsuit Wear</h2>
+        <div class="judges-container">
+            <div class="container judge-1">
+                <h2>Judge 1 Score</h2>
+                <form id="swimsuit-judging-form-1">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-8-1">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-8-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-8-1">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-8-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-8-1">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-8-1" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-8-1">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-8-1" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(1, 8)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-8-1">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-2">
+                <h2>Judge 2 Score</h2>
+                <form id="swimsuit-judging-form-2">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-8-2">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-8-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-8-2">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-8-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-8-2">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-8-2" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-8-2">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-8-2" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(2, 8)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-8-2">0</span></h3>
+                </div>
+            </div>
+            <div class="container judge-3">
+                <h2>Judge 3 Score</h2>
+                <form id="swimsuit-judging-form-3">
+                    <div class="input-group">
+                        <label for="swimsuit-body-proportion-8-3">Body Proportion (30%):</label>
+                        <input type="number" id="swimsuit-body-proportion-8-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-poise-8-3">Poise and Carriage (30%):</label>
+                        <input type="number" id="swimsuit-poise-8-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-beauty-8-3">Beauty (30%):</label>
+                        <input type="number" id="swimsuit-beauty-8-3" placeholder="Enter score out of 30" min="0" max="30" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="swimsuit-impression-8-3">Overall Impression (10%):</label>
+                        <input type="number" id="swimsuit-impression-8-3" placeholder="Enter score out of 10" min="0" max="10" required>
+                    </div>
+                    <button type="button" onclick="calculateSwimsuitTotal(3, 8)">Calculate Total</button>
+                </form>
+                <div class="result">
+                    <h3>Total Score: <span id="swimsuit-total-score-8-3">0</span></h3>
+                </div>
+            </div>
+        </div>
+        <div class="average-container">
+            <h2>Average Score</h2>
+            <h3 id="swimsuit-average-score-8">0</h3>
+        </div>
+        <script src="script2.js"></script>
+    </div>
+    
+    <!-- Similar judging forms for each contestant -->
+</div>
+
+<div class="tab-content" id="qna" style="display: none;">
+    <ul class="contestant-tabs">
+        <li><a href="#qna-contestant-1" onclick="showContestant('qna-contestant-1')">Contestant 1</a></li>
+        <li><a href="#qna-contestant-2" onclick="showContestant('qna-contestant-2')">Contestant 2</a></li>
+        <li><a href="#qna-contestant-3" onclick="showContestant('qna-contestant-3')">Contestant 3</a></li>
+        <li><a href="#qna-contestant-4" onclick="showContestant('qna-contestant-4')">Contestant 4</a></li>
+        <li><a href="#qna-contestant-5" onclick="showContestant('qna-contestant-5')">Contestant 5</a></li>
+        <li><a href="#qna-contestant-6" onclick="showContestant('qna-contestant-6')">Contestant 6</a></li>
+        <li><a href="#qna-contestant-7" onclick="showContestant('qna-contestant-7')">Contestant 7</a></li>
+        <li><a href="#qna-contestant-8" onclick="showContestant('qna-contestant-8')">Contestant 8</a></li>
+        <!-- Repeat for Contestants 2-8 -->
+    </ul>
+
+<!-- Contestant 1 -->
+<div class="contestant-content" id="qna-contestant-1" style="display: none;">
+    <h2>Judging for Contestant 1 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 1 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-1">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-1" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-1">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-1">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 1)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-1">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 1 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-1">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-1" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-1">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-1">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 1)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-1">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 1 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-1">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-1" placeholder="Enter score out of 20 " min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-1">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-1">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-1" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 1)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-1">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-1">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+
+<div class="contestant-content" id="qna-contestant-2" style="display: none;">
+    <h2>Judging for Contestant 2 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 2 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-2">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-2">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-2" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-2">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-2">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 2)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-2">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 2 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-2">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-2">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-2" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-2">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-2">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 2)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-2">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 2 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-2">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-2">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-2" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-2">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-2">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-2" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 2)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-2">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-2">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+<div class="contestant-content" id="qna-contestant-3" style="display: none;">
+    <h2>Judging for Contestant 3 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 3 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-3">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-3">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-3" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-3">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-3">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 3)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-3">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 3 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-3">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-3">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-3" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-3">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-3">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 3)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-3">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 3 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-3">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-3">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-3" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-3">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-3">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-3" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 3)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-3">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-3">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+<div class="contestant-content" id="qna-contestant-4" style="display: none;">
+    <h2>Judging for Contestant 4 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 4 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-4">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-4">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-4" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-4">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-4">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 4)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-4">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 4 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-4">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-4">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-4" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-4">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-4">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 4)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-4">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 4 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-4">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-4">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-4" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-4">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-4">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-4" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 4)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-4">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-4">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+<div class="contestant-content" id="qna-contestant-5" style="display: none;">
+    <h2>Judging for Contestant 5 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 5 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-5">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-5">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-5" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-5">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-5">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 5)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-5">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 5 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-5">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-5">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-5" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-5">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-5">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 5)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-5">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 5 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-5">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-5">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-5" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-5">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-5">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-5" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 5)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-5">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-5">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+<div class="contestant-content" id="qna-contestant-6" style="display: none;">
+    <h2>Judging for Contestant 6 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 6 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-6">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-6">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-6" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-6">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-6">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 6)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-6">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 6 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-6">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-6">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-6" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-6">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-6">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 6)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-6">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 6 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-6">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-6">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-6" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-6">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-6">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-6" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 6)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-6">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-6">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+<div class="contestant-content" id="qna-contestant-7" style="display: none;">
+    <h2>Judging for Contestant 7 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 7 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-7">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-7">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-7" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-7">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-7">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 7)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-7">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 7 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-7">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-7">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-7" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-7">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-7">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 7)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-7">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 7 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-7">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-7">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-7" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-7">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-7">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-7" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 7)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-7">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-7">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+<div class="contestant-content" id="qna-contestant-8" style="display: none;">
+    <h2>Judging for Contestant 8 - Question and Answer</h2>
+    <div class="judges-container">
+        <!-- Judge 1 for Contestant 8 -->
+        <div class="container judge-1">
+            <h2>Judge 1 Score</h2>
+            <form id="qa-judging-form-1-8">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-1-8">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-1-8" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-1-8">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-1-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-1-8">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-1-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(1, 8)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-1-8">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 2 for Contestant 8 -->
+        <div class="container judge-2">
+            <h2>Judge 2 Score</h2>
+            <form id="qa-judging-form-2-8">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-2-8">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-2-8" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-2-8">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-2-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-2-8">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-2-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(2, 8)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-2-8">0</span></h3>
+            </div>
+        </div>
+
+        <!-- Judge 3 for Contestant 8 -->
+        <div class="container judge-3">
+            <h2>Judge 3 Score</h2>
+            <form id="qa-judging-form-3-8">
+                <div class="input-group">
+                    <label for="qa-beauty-pressure-3-8">Beauty under Pressure (20%):</label>
+                    <input type="number" id="qa-beauty-pressure-3-8" placeholder="Enter score out of 20" min="0" max="20" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-substance-3-8">Substance of the Answer (40%):</label>
+                    <input type="number" id="qa-substance-3-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <div class="input-group">
+                    <label for="qa-delivery-3-8">Delivery of the Answer (40%):</label>
+                    <input type="number" id="qa-delivery-3-8" placeholder="Enter score out of 40" min="0" max="40" required>
+                </div>
+                <button type="button" onclick="calculateQATotal(3, 8)">Calculate Total</button>
+            </form>
+            <div class="result">
+                <h3>Total Score: <span id="qa-total-score-3-8">0</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="average-container">
+        <h2>Average Score</h2>
+        <h3 id="qa-average-score-8">0</h3>
+    </div>
+    <script src="script3.js"></script>
+</div>
+
+
+    
+    <!-- Similar judging forms for each contestant -->
+</div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tab content
+    var tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(function(tab) {
+        tab.style.display = 'none';
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName).style.display = 'block';
+}
+
+function showContestant(contestantName) {
+    // Hide all contestant content within the current tab
+    var contestants = document.querySelectorAll('.contestant-content');
+    contestants.forEach(function(content) {
+        content.style.display = 'none';
+    });
+    
+    // Show selected contestant
+    document.getElementById(contestantName).style.display = 'block';
+}
+
+// Initialize the page to show the first tab
+window.onload = function() {
+    showTab('casual'); // Default to Casual Wear
+}
+</script>
+
+<!-- Footer Section -->
+<footer class="footer">
+    <p>© 2024 Pageant Tabulation. All Rights Reserved. Franjo Christopher M. Lorena</p>
+    <style>/* Ensure that the content has enough padding so it doesn't overlap with the footer */
+        .content {
+            padding-bottom: 100px;  /* Adjust this if the footer height changes */
+        }
+        
+        /* Footer styling */
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #333; /* Dark background for the footer */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            z-index: 1000; /* Ensures the footer stays on top */
+        }
+        </style>
+</footer>
+
+</body>
+</html>
